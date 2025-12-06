@@ -8,6 +8,17 @@ import time
 import json
 import msvcrt
 
+def select50():
+    select_box = wait.until(EC.element_to_be_clickable(
+        (By.CSS_SELECTOR, "mat-select")
+    ))
+    driver.execute_script("arguments[0].click();", select_box)
+    option_50 = wait.until(EC.element_to_be_clickable(
+        (By.XPATH, "//mat-option//span[contains(text(), '50')]")
+    ))
+    driver.execute_script("arguments[0].click();", option_50)
+
+
 # Correct path
 PATH = r"C:\Users\Johan\Desktop\chromedriver-win64\chromedriver.exe"
 
@@ -33,24 +44,10 @@ if start == True:
     consent.click()
     start = False
 
-    
 
 j = 0
 while True:
-    select_box = wait.until(EC.element_to_be_clickable(
-        (By.CSS_SELECTOR, "mat-select")
-    ))
-
-    # 2. Use JavaScript click to bypass overlays
-    driver.execute_script("arguments[0].click();", select_box)
-
-    # 3. Select the 50-option
-    option_50 = wait.until(EC.element_to_be_clickable(
-        (By.XPATH, "//mat-option//span[contains(text(), '50')]")
-    ))
-
-    driver.execute_script("arguments[0].click();", option_50)
-
+    select50()
 
     time.sleep(10)  # give table time to load
     print("test2")
@@ -60,6 +57,8 @@ while True:
 
     readyChangePage = True
     for i in range(len(rows)):
+        select50()
+
         if readyChangePage:
             for k in range(j):
                 print("test")
@@ -68,6 +67,7 @@ while True:
                 ))
                 driver.execute_script("arguments[0].click();", next_button)
             readyChangePage = False
+        
         time.sleep(1)
         try:
             # re-find row each time to avoid stale element
@@ -75,7 +75,7 @@ while True:
             row.click()
             time.sleep(1)  # wait for page navigation
             url = driver.current_url
-            #print(url)
+            print(url)
             print(url[27:37])
             match_ids.append(url[27:37])
             driver.back()
@@ -84,11 +84,9 @@ while True:
         except:
             print("test3")
             continue
+
     j += 1
     print(match_ids)
-
-
-
 
 
 
