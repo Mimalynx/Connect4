@@ -22,7 +22,12 @@ listOfAllIds = ["6034f6c4e8d38d66cf92b549"]
 listOfIds = ["6034f6c4e8d38d66cf92b549"]
 listOfGames = []
 start = True
+bestPlayerId = "6034f6c4e8d38d66cf92b549"
+bestPlayerElo = 0
+highElo = False
 while(len(listOfIds) > 0):
+    #print(bestPlayerId)
+    #print(bestPlayerElo)
     print(len(listOfIds))
     print(len(listOfGames))
     idOfProfile = listOfIds.pop()
@@ -50,6 +55,12 @@ while(len(listOfIds) > 0):
         continue
 
     minElo = 1700
+    if len(listOfIds) > 10:
+        highElo = True
+
+    if highElo:
+        minElo = 1800
+
     for i in gamesInfo:
         if i["gameType"] != "Connect4":
             continue
@@ -60,13 +71,20 @@ while(len(listOfIds) > 0):
         print(i["uid"])
         if not (i["uid"] in listOfGames):
             listOfGames.append(i["uid"])
+
         if(not (i["players"][1]["accountId"] in listOfAllIds)):
             listOfIds.append(i["players"][1]["accountId"])
             listOfAllIds.append(i["players"][1]["accountId"])
+            if i["players"][1]["glicko2RatingRating"] > bestPlayerElo:
+                bestPlayerElo = i["players"][1]["glicko2RatingRating"] 
+                bestPlayerId = i["players"][1]["accountId"]
 
         if(not (i["players"][0]["accountId"] in listOfAllIds)):
             listOfIds.append(i["players"][0]["accountId"])
             listOfAllIds.append(i["players"][0]["accountId"])
+            if i["players"][0]["glicko2RatingRating"] > bestPlayerElo:
+                bestPlayerElo = i["players"][0]["glicko2RatingRating"] 
+                bestPlayerId = i["players"][0]["accountId"]
         #print(i.keys())
         #print(i)
 
