@@ -18,23 +18,58 @@ service = Service(PATH)
 driver = webdriver.Chrome(service=service)
 wait = WebDriverWait(driver, 20)
 
-driver.get("https://papergames.io/en/match-history/6034f6c4e8d38d66cf92b549")
+listOfAllIds = ["6034f6c4e8d38d66cf92b549"]
+listOfIds = ["6034f6c4e8d38d66cf92b549"]
+listOfGames = []
+start = True
+while(len(listOfIds) > 0):
+    print(len(listOfIds))
+    print(len(listOfGames))
+    idOfProfile = listOfIds.pop()
+    driver.get("https://papergames.io/en/match-history/" + idOfProfile)
 
-consent =  wait.until(EC.element_to_be_clickable(
-    (By.XPATH, "//button[contains(@class, 'fc-cta-consent')]")
-))
-consent.click()
+    if start == True:
+        consent =  wait.until(EC.element_to_be_clickable(
+            (By.XPATH, "//button[contains(@class, 'fc-cta-consent')]")
+        ))
+        consent.click()
+        start = False
 
-gameInfo = driver.find_element(By.ID, "serverApp-state")
-raw_json = gameInfo.get_attribute("textContent")
-data = json.loads(raw_json)
+    gameInfo = driver.find_element(By.ID, "serverApp-state")
+    raw_json = gameInfo.get_attribute("textContent")
+    data = json.loads(raw_json)
+    gamesInfo = []
+    try:
+        if "rooms" in data[list(data.keys())[0]]["b"].keys():
+            gamesInfo = data[list(data.keys())[0]]["b"]["rooms"]
+        elif "rooms" in data[list(data.keys())[1]]["b"].keys():
+            gamesInfo = data[list(data.keys())[1]]["b"]["rooms"]
+        else:
+            raise Exception("No room in data")
+    except:
+        continue
 
-gamesInfo = data[list(data.keys())[1]]["b"]["rooms"]
-for i in gamesInfo:
-    print(i[list(i.keys())[1]])
-    print(i[list(i.keys())[2]])
-    print(i)
-    break
+    minElo = 1700
+    for i in gamesInfo:
+        if i["gameType"] != "Connect4":
+            continue
+        if i["players"][0]["glicko2RatingRating"] < minElo:
+            continue
+        if i["players"][1]["glicko2RatingRating"] < minElo:
+            continue
+        print(i["uid"])
+        if not (i["uid"] in listOfGames):
+            listOfGames.append(i["uid"])
+        if(not (i["players"][1]["accountId"] in listOfAllIds)):
+            listOfIds.append(i["players"][1]["accountId"])
+            listOfAllIds.append(i["players"][1]["accountId"])
+
+        if(not (i["players"][0]["accountId"] in listOfAllIds)):
+            listOfIds.append(i["players"][0]["accountId"])
+            listOfAllIds.append(i["players"][0]["accountId"])
+        #print(i.keys())
+        #print(i)
+
 
 while True:
     key = msvcrt.getch().decode().lower()
