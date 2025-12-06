@@ -9,14 +9,20 @@ import json
 import msvcrt
 
 def select50():
-    select_box = wait.until(EC.element_to_be_clickable(
-        (By.CSS_SELECTOR, "mat-select")
-    ))
-    driver.execute_script("arguments[0].click();", select_box)
-    option_50 = wait.until(EC.element_to_be_clickable(
-        (By.XPATH, "//mat-option//span[contains(text(), '50')]")
-    ))
-    driver.execute_script("arguments[0].click();", option_50)
+    try:
+        select_box = wait.until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, "mat-select")
+        ))
+        driver.execute_script("arguments[0].click();", select_box)
+
+        # click option 50
+        option_50 = wait.until(EC.presence_of_element_located(
+            (By.XPATH, "//mat-option//span[contains(text(), '50')]")
+        ))
+        driver.execute_script("arguments[0].click();", option_50)
+    except:
+        print("error")
+        select50()
 
 
 # Correct path
@@ -49,7 +55,7 @@ j = 0
 while True:
     select50()
 
-    time.sleep(10)  # give table time to load
+    time.sleep(1)  # give table time to load
     print("test2")
 
     rows = driver.find_elements(By.CSS_SELECTOR, "tr.mat-mdc-row")
@@ -57,6 +63,7 @@ while True:
 
     readyChangePage = True
     for i in range(len(rows)):
+        print(i)
         select50()
 
         if readyChangePage:
@@ -68,18 +75,20 @@ while True:
                 driver.execute_script("arguments[0].click();", next_button)
             readyChangePage = False
         
-        time.sleep(1)
+        time.sleep(0.2)
         try:
-            # re-find row each time to avoid stale element
             row = driver.find_elements(By.CSS_SELECTOR, "tr.mat-mdc-row")[i]
-            print(driver.find_elements(By.CSS_SELECTOR, "tr.mat-mdc-row"))
+            #match_id = driver.execute_script("return arguments[0].__ngContext__", row)
+            #print(match_id)
+            #print(row.get_attribute("outerHTML"))
+            #print(driver.find_elements(By.CSS_SELECTOR, "tr.mat-mdc-row"))
             row.click()
-            time.sleep(1)  # wait for page navigation
+            time.sleep(0.2)  # wait for page navigation
             url = driver.current_url
             print(url)
             match_ids.append(url)
             driver.back()
-            time.sleep(1)  # wait to return
+            time.sleep(0.2)  # wait to return
             readyChangePage = True
         except:
             print("test3")
