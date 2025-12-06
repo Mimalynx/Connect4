@@ -72,12 +72,12 @@ while True:
         try:
             # re-find row each time to avoid stale element
             row = driver.find_elements(By.CSS_SELECTOR, "tr.mat-mdc-row")[i]
+            print(driver.find_elements(By.CSS_SELECTOR, "tr.mat-mdc-row"))
             row.click()
             time.sleep(1)  # wait for page navigation
             url = driver.current_url
             print(url)
-            print(url[27:37])
-            match_ids.append(url[27:37])
+            match_ids.append(url)
             driver.back()
             time.sleep(1)  # wait to return
             readyChangePage = True
