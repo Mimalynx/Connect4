@@ -31,9 +31,17 @@ service = Service(PATH)
 driver = webdriver.Chrome(service=service)
 wait = WebDriverWait(driver, 20)
 
-listOfAllIds = ["6034f6c4e8d38d66cf92b549"]
-listOfIds = ["6034f6c4e8d38d66cf92b549"]
-NameList = ["angel 77"]
+#listOfAllIds = ["6034f6c4e8d38d66cf92b549"]
+#listOfIds = ["6034f6c4e8d38d66cf92b549"]
+#NameList = ["angel 77"]
+
+with open("ListOfPlayers.txt") as file:
+    listOfAllIds = [line.rstrip() for line in file]
+    
+with open("ListOfPlayers.txt") as file:
+    listOfIds = [line.rstrip() for line in file]
+NameList = []
+
 start = True
 
 while(len(listOfIds) > 0):
@@ -43,6 +51,8 @@ while(len(listOfIds) > 0):
 
         idOfProfile = listOfIds.pop()
         driver.get("https://papergames.io/en/match-history/" + idOfProfile)
+
+        print(idOfProfile)
         time.sleep(0.5)
         if start == True:
             consent =  wait.until(EC.element_to_be_clickable(
@@ -97,10 +107,14 @@ while(len(listOfIds) > 0):
                             myfile.write(candidateUser + "\n")
                     except Exception as e:
                         print("File write error:", e)
+                else:
+                    NameList.append(names[i])
                 time.sleep(0.2)
             except:
+                print("error 1")
                 continue
     except:
+        print("error 2")
         continue
     
 
