@@ -52,7 +52,6 @@ while(len(listOfIds) > 0):
         idOfProfile = listOfIds.pop()
         driver.get("https://papergames.io/en/match-history/" + idOfProfile)
 
-        print(idOfProfile)
         time.sleep(0.5)
         if start == True:
             consent =  wait.until(EC.element_to_be_clickable(
@@ -71,11 +70,17 @@ while(len(listOfIds) > 0):
         name_elements = driver.find_elements(By.CLASS_NAME, "user-profile")
         names = [el.text for el in name_elements]
 
+        gamesData = driver.find_elements(By.CSS_SELECTOR, "td.cdk-column-gameType")
+        games = [el.text.strip() for el in gamesData]
+
         for i in range(len(rows)):
             try:
                 if elos[i] < minElo:
                     continue
                 if names[i] in NameList:
+                    continue
+                if games[int(i/2)] != "Connect 4":
+                    print(games[int(i/2)])
                     continue
                 row = rows[i]
                 #row.click()
