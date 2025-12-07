@@ -8,13 +8,10 @@ import time
 import json
 import msvcrt
 
-# Correct path
 PATH = r"C:\Users\Johan\Desktop\chromedriver-win64\chromedriver.exe"
 
-# Create service object
 service = Service(PATH)
 
-# Start Chrome correctly
 driver = webdriver.Chrome(service=service)
 wait = WebDriverWait(driver, 20)
 
@@ -24,7 +21,7 @@ listOfGames = []
 start = True
 bestPlayerId = "6034f6c4e8d38d66cf92b549"
 bestPlayerElo = 0
-highElo = False
+#highElo = False
 while(len(listOfIds) > 0):
     #print(bestPlayerId)
     #print(bestPlayerElo)
@@ -55,11 +52,6 @@ while(len(listOfIds) > 0):
         continue
 
     minElo = 1700
-    if len(listOfIds) > 10:
-        highElo = True
-
-    if highElo:
-        minElo = 1800
 
     for i in gamesInfo:
         if i["gameType"] != "Connect4":
