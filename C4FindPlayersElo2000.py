@@ -36,21 +36,17 @@ wait = WebDriverWait(driver, 5)
 
 #with open("ListOfPlayers.txt") as file:
 #    listOfAllIds = [line.rstrip() for line in file]
-    
-#with open("ListOfPlayers.txt") as file:
-#    listOfIds = [line.rstrip() for line in file]
-#NameList = []
 
-listOfAllIds = []
-listOfIds = []
+with open("ListOfPlayers.txt") as file:
+    listOfIds = [line.rstrip() for line in file]
+
+
+with open("ListOfPlayers2000.txt") as file:
+    listOfAllIds = [line.rstrip() for line in file]
+
+
+
 NameList = []
-
-with open("ListOfPlayers.txt", "r") as f:
-    for line in f:
-        parts = line.strip().split(",")
-        listOfAllIds.append(parts[1])
-        listOfIds.append(parts[1])
-        NameList.append(parts[0])
 
 start = True
 
@@ -62,7 +58,6 @@ while(len(listOfIds) > 0):
         idOfProfile = listOfIds.pop()
         print(idOfProfile)
         driver.get("https://papergames.io/en/match-history/" + idOfProfile)
-        print("test1")
         time.sleep(0.5)
         if start == True:
             consent =  wait.until(EC.element_to_be_clickable(
@@ -71,7 +66,8 @@ while(len(listOfIds) > 0):
             consent.click()
             start = False
 
-        minElo = 1850
+        #minElo = 1850
+        minElo = 2000
         select50()
         time.sleep(0.5)
         rows = driver.find_elements(By.CSS_SELECTOR, "div.user-profile.cursor-pointer")
@@ -114,13 +110,14 @@ while(len(listOfIds) > 0):
                 candidateUser = href[39:]
                 if(not(candidateUser in listOfAllIds)):
                     listOfAllIds.append(candidateUser)
-                    listOfIds.append(candidateUser)
+                    if not (candidateUser in listOfIds):
+                        listOfIds.append(candidateUser)
                     NameList.append(names[i])
                     print(candidateUser)
                     print(elos[i])
                     try:
-                        with open("ListOfPlayers.txt", "a") as myfile:
-                            myfile.write(names[i] + "," + candidateUser + "," + str(elos[i]) + "\n")
+                        with open("ListOfPlayers2000.txt", "a") as myfile:
+                            myfile.write(candidateUser + "\n")
                     except Exception as e:
                         print("File write error:", e)
                 else:
