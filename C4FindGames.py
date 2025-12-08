@@ -8,6 +8,7 @@ import time
 import json
 import msvcrt
 
+
 PATH = r"C:\Users\Johan\Desktop\chromedriver-win64\chromedriver.exe"
 
 service = Service(PATH)
