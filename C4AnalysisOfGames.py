@@ -38,11 +38,13 @@ service = Service(PATH)
 driver = webdriver.Chrome(service=service)
 wait = WebDriverWait(driver, 20)
 
-ids = []
+with open("ListOfGamesIdNotEnded.txt", "r") as f:
+    testedIds = [line.rstrip() for line in f]
+
 with open("ListOfAnalysisOfGames.txt", "r") as f:
     for line in f:
         parts = line.strip().split(",")
-        ids.append(parts[1])
+        testedIds.append(parts[1])
         #print(parts[1])
 
 with open("ListOfGames.txt") as file:
@@ -51,7 +53,8 @@ with open("ListOfGames.txt") as file:
 while(len(listOfGames) > 0):
     #gameId = "GERXuah0uV"
     gameId = listOfGames.pop()
-    if gameId in ids:
+    print(gameId)
+    if gameId in testedIds:
         continue
     print(len(listOfGames))
 
@@ -65,9 +68,13 @@ while(len(listOfGames) > 0):
     height = [6,6,6,6,6,6,6]
 
     time.sleep(0.5)
-    WaitForLoad = wait.until(EC.element_to_be_clickable(
-        (By.CSS_SELECTOR, f".cell-{1}-{1}")
-    ))
+    try:
+        WaitForLoad = wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, f".cell-{1}-{1}")
+        ))
+    except Exception as error:
+        print(error)
+        continue
 
     try:
         while(gameStagnant < 6):
@@ -113,7 +120,7 @@ while(len(listOfGames) > 0):
                         if won(board) == 'D':
                             gameStagnant = 10000
                             whoWon = "D"
-            print(moveString)
+            #print(moveString)
             #for row in range(1, 7):       # 6 rows
             #    row_str = ""
             #    for col in range(1, 8):   # 7 columns
@@ -121,6 +128,7 @@ while(len(listOfGames) > 0):
             #    print(row_str)
     except Exception as error:
         print(error)
+        continue
 
     if whoWon != "":
         with open("ListOfAnalysisOfGames.txt", "a") as myfile:
@@ -128,3 +136,6 @@ while(len(listOfGames) > 0):
         print(turn)
         print(gameId)
         print(moveString)
+    else:
+        with open("ListOfGamesIdNotEnded.txt", "a") as myfile:
+            myfile.write(gameId + "\n")
