@@ -38,6 +38,12 @@ service = Service(PATH)
 driver = webdriver.Chrome(service=service)
 wait = WebDriverWait(driver, 20)
 
+ids = []
+with open("ListOfAnalysisOfGames.txt", "r") as f:
+    for line in f:
+        parts = line.strip().split(",")
+        ids.append(parts[1])
+        #print(parts[1])
 
 with open("ListOfGames.txt") as file:
     listOfGames = [line.rstrip() for line in file]
@@ -45,56 +51,80 @@ with open("ListOfGames.txt") as file:
 while(len(listOfGames) > 0):
     #gameId = "GERXuah0uV"
     gameId = listOfGames.pop()
+    if gameId in ids:
+        continue
     print(len(listOfGames))
-
-    driver.get("https://papergames.io/en/r/" + gameId)
-
-    time.sleep(2)
 
     board = [['.' for _ in range(7)] for _ in range(6)]
     whoWon = ""
     moveString = ""
     gameStagnant = 0
+    turn = 0
+    turnPlayer = ""
+    driver.get("https://papergames.io/en/r/" + gameId)
+    height = [6,6,6,6,6,6,6]
 
-    while(gameStagnant < 3):
-        gameStagnant += 1
-        for row in range(1, 7):       # 6 rows
-            for col in range(1, 8):   # 7 columns
-                cell = driver.find_element(By.CSS_SELECTOR, f".cell-{row}-{col}")
-                circle = cell.find_element(By.TAG_NAME, "circle")
+    time.sleep(0.5)
+    WaitForLoad = wait.until(EC.element_to_be_clickable(
+        (By.CSS_SELECTOR, f".cell-{1}-{1}")
+    ))
 
-                cls = circle.get_attribute("class")
+    try:
+        while(gameStagnant < 6):
+            time.sleep(0.5)
+            gameStagnant += 1
+            for row in range(1, 7):       # 6 rows
+                for col in range(1, 8):   # 7 columns
+                    if height[col-1] != row:
+                        #print("test")
+                        #print(height[col-1])
+                        #print(row)
+                        continue
+                    cell = driver.find_element(By.CSS_SELECTOR, f".cell-{row}-{col}")
+                    circle = cell.find_element(By.TAG_NAME, "circle")
 
-                if "empty-slot" in cls:
-                    board[row-1][col-1] = '.'
-                elif "circle-light" in cls:
-                    if board[row-1][col-1] == '.':
-                        moveString = moveString + str(col)
-                        gameStagnant = 0
-                        #if firstWon: raise Exception("Error: too fast placement 1")
-                    board[row-1][col-1] = 'L'   # Light color
-                    if won(board) == 'L':
-                        gameStagnant = 10000
-                        whoWon = "L"
-                elif "circle-dark" in cls:
-                    if board[row-1][col-1] == '.':
-                        moveString = moveString + str(col)
-                        gameStagnant = 0
-                        #if not firstWon: raise Exception("Error: too fast placement 2")
-                    board[row-1][col-1] = 'D'   # Dark color
-                    if won(board) == 'D':
-                        gameStagnant = 10000
-                        whoWon = "D"
-        #print(moveString)
-        #for row in range(1, 7):       # 6 rows
-        #    row_str = ""
-        #    for col in range(1, 8):   # 7 columns
-        #        row_str = row_str + " " + board[row-1][col-1]
-        #    print(row_str)
-    
+                    cls = circle.get_attribute("class")
+
+                    if "empty-slot" in cls:
+                        board[row-1][col-1] = '.'
+                    elif "circle-light" in cls:
+                        height[col-1] -= 1
+                        if board[row-1][col-1] == '.':
+                            moveString = moveString + str(col)
+                            gameStagnant = 0
+                            #if turn % 2 != 1: raise Exception("moves out of order1")
+                            if turnPlayer == "D": raise Exception("moves out of order1")
+                            turnPlayer = "D"
+                            turn = turn + 1
+                        board[row-1][col-1] = 'L'   # Light color
+                        if won(board) == 'L':
+                            gameStagnant = 10000
+                            whoWon = "L"
+                    elif "circle-dark" in cls:
+                        height[col-1] -= 1
+                        if board[row-1][col-1] == '.':
+                            moveString = moveString + str(col)
+                            gameStagnant = 0
+                            #if turn % 2 != 0: raise Exception("moves out of order2")
+                            if turnPlayer == "L": raise Exception("moves out of order1")
+                            turnPlayer = "L"
+                            turn = turn + 1
+                        board[row-1][col-1] = 'D'   # Dark color
+                        if won(board) == 'D':
+                            gameStagnant = 10000
+                            whoWon = "D"
+            print(moveString)
+            #for row in range(1, 7):       # 6 rows
+            #    row_str = ""
+            #    for col in range(1, 8):   # 7 columns
+            #        row_str = row_str + " " + board[row-1][col-1]
+            #    print(row_str)
+    except Exception as error:
+        print(error)
+
     if whoWon != "":
         with open("ListOfAnalysisOfGames.txt", "a") as myfile:
-            myfile.write(whoWon + "," + gameId + "," + moveString + "\n")
-        print(whoWon)
+            myfile.write(str(turn) + "," + gameId + "," + moveString + "\n")
+        print(turn)
         print(gameId)
         print(moveString)
