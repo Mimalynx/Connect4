@@ -15,7 +15,6 @@ def select50():
         ))
         driver.execute_script("arguments[0].click();", select_box)
 
-        # click option 50
         option_50 = wait.until(EC.presence_of_element_located(
             (By.XPATH, "//mat-option//span[contains(text(), '50')]")
         ))
@@ -29,7 +28,7 @@ PATH = r"C:\Users\Johan\Desktop\chromedriver-win64\chromedriver.exe"
 service = Service(PATH)
 
 driver = webdriver.Chrome(service=service)
-wait = WebDriverWait(driver, 20)
+wait = WebDriverWait(driver, 5)
 
 #listOfAllIds = ["6034f6c4e8d38d66cf92b549"]
 #listOfIds = ["6034f6c4e8d38d66cf92b549"]
@@ -50,8 +49,9 @@ while(len(listOfIds) > 0):
         print(len(listOfAllIds))
 
         idOfProfile = listOfIds.pop()
+        print(idOfProfile)
         driver.get("https://papergames.io/en/match-history/" + idOfProfile)
-
+        print("test1")
         time.sleep(0.5)
         if start == True:
             consent =  wait.until(EC.element_to_be_clickable(
@@ -118,8 +118,9 @@ while(len(listOfIds) > 0):
             except:
                 print("error 1")
                 continue
-    except:
+    except Exception as error:
         print("error 2")
+        print(error)
         continue
     
 

@@ -15,9 +15,20 @@ service = Service(PATH)
 driver = webdriver.Chrome(service=service)
 wait = WebDriverWait(driver, 20)
 
-listOfAllIds = ["6034f6c4e8d38d66cf92b549"]
-listOfIds = ["6034f6c4e8d38d66cf92b549"]
-listOfGames = []
+#listOfAllIds = ["6034f6c4e8d38d66cf92b549"]
+#listOfIds = ["6034f6c4e8d38d66cf92b549"]
+with open("ListOfPlayers.txt") as file:
+    listOfAllIds = [line.rstrip() for line in file]
+    
+with open("ListOfPlayers.txt") as file:
+    listOfIds = [line.rstrip() for line in file]
+
+
+try:
+    with open("ListOfGames.txt") as file:
+        listOfGames = [line.rstrip() for line in file]
+except:
+    listOfGames = []
 start = True
 bestPlayerId = "6034f6c4e8d38d66cf92b549"
 bestPlayerElo = 0
@@ -51,7 +62,7 @@ while(len(listOfIds) > 0):
     except:
         continue
 
-    minElo = 1700
+    minElo = 1850
 
     for i in gamesInfo:
         if i["gameType"] != "Connect4":
@@ -60,9 +71,15 @@ while(len(listOfIds) > 0):
             continue
         if i["players"][1]["glicko2RatingRating"] < minElo:
             continue
-        print(i["uid"])
+
         if not (i["uid"] in listOfGames):
+            print(i["uid"])
             listOfGames.append(i["uid"])
+            try:
+                with open("ListOfGames.txt", "a") as myfile:
+                    myfile.write(i["uid"] + "\n")
+            except Exception as e:
+                print("File write error:", e)
 
         if(not (i["players"][1]["accountId"] in listOfAllIds)):
             listOfIds.append(i["players"][1]["accountId"])
