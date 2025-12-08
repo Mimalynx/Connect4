@@ -9,19 +9,15 @@ import json
 import msvcrt
 
 def select50():
-    try:
-        select_box = wait.until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "mat-select")
-        ))
-        driver.execute_script("arguments[0].click();", select_box)
+    select_box = wait.until(EC.presence_of_element_located(
+        (By.CSS_SELECTOR, "mat-select")
+    ))
+    driver.execute_script("arguments[0].click();", select_box)
 
-        option_50 = wait.until(EC.presence_of_element_located(
-            (By.XPATH, "//mat-option//span[contains(text(), '50')]")
-        ))
-        driver.execute_script("arguments[0].click();", option_50)
-    except:
-        print("error")
-        select50()
+    option_50 = wait.until(EC.presence_of_element_located(
+        (By.XPATH, "//mat-option//span[contains(text(), '50')]")
+    ))
+    driver.execute_script("arguments[0].click();", option_50)
 
 PATH = r"C:\Users\Johan\Desktop\chromedriver-win64\chromedriver.exe"
 
@@ -62,7 +58,6 @@ while(len(listOfIds) > 0):
         idOfProfile = listOfIds.pop()
         print(idOfProfile)
         driver.get("https://papergames.io/en/match-history/" + idOfProfile)
-        print("test1")
         time.sleep(0.5)
         if start == True:
             consent =  wait.until(EC.element_to_be_clickable(
