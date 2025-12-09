@@ -7,12 +7,13 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import json
 import msvcrt
+import random
 
 def select50():
     select_box = wait.until(EC.presence_of_element_located(
         (By.CSS_SELECTOR, "mat-select")
     ))
-    driver.execute_script("arguments[0].click();", select_box)
+    driver.execute_script("arguments[0].click();", select_box) 
 
     option_50 = wait.until(EC.presence_of_element_located(
         (By.XPATH, "//mat-option//span[contains(text(), '50')]")
@@ -55,10 +56,11 @@ while(len(listOfIds) > 0):
         print(len(listOfIds))
         print(len(listOfAllIds))
 
-        idOfProfile = listOfIds.pop()
+        idOfProfile = listOfIds.pop(random.randint(0,len(listOfIds)-1))
         print(idOfProfile)
         driver.get("https://papergames.io/en/match-history/" + idOfProfile)
         time.sleep(0.5)
+        #wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
         if start == True:
             consent =  wait.until(EC.element_to_be_clickable(
                 (By.XPATH, "//button[contains(@class, 'fc-cta-consent')]")
