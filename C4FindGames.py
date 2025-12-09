@@ -48,8 +48,8 @@ while(len(listOfIds) > 0):
         #print(bestPlayerElo)
         print(len(listOfIds))
         print(len(listOfGames))
-        #idOfProfile = listOfIds.pop()
-        idOfProfile = listOfIds.pop(random.randint(0,len(listOfIds)-1))
+        idOfProfile = listOfIds.pop()
+        #idOfProfile = listOfIds.pop(random.randint(0,len(listOfIds)-1))
         driver.get("https://papergames.io/en/match-history/" + idOfProfile)
 
         if start == True:
