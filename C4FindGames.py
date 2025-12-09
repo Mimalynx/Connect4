@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import json
 import msvcrt
+import random
 
 PATH = r"C:\Users\Johan\Desktop\chromedriver-win64\chromedriver.exe"
 
@@ -47,7 +48,8 @@ while(len(listOfIds) > 0):
         #print(bestPlayerElo)
         print(len(listOfIds))
         print(len(listOfGames))
-        idOfProfile = listOfIds.pop()
+        #idOfProfile = listOfIds.pop()
+        idOfProfile = listOfIds.pop(random.randint(0,len(listOfIds)-1))
         driver.get("https://papergames.io/en/match-history/" + idOfProfile)
 
         if start == True:
